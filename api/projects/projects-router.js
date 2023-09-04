@@ -2,7 +2,7 @@
 const express = require('express');
 
 // The middleware functions also need to be required
-const { validateProjectId } = require("./projects-middleware")
+const { validateProjectId, validateProject } = require("./projects-middleware")
 
 // The middleware functions also need to be required
 const Project = require("../projects/projects-model")
@@ -26,10 +26,18 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/:id', validateProjectId, (req, res) => {
-  // RETURN THE USER OBJECT
-  // this needs a middleware to verify user id
   res.json(req.project)
 });
+
+
+router.post('/', validateProject, (req, res, next) => {
+  Project.insert(req.body)
+    .then(project => {
+      res.status(201).json(project)
+    })
+    .catch(next)
+});
+
 
 // error handling
 router.use((err, req, res, next) => {

@@ -1,18 +1,5 @@
 const Project = require("../projects/projects-model")
 
-// function validateProjects(req, res, next) {
-//   // DO YOUR MAGIC
-//   const { text } = req.body
-//   if (!text || !text.trim()) {
-//     res.status(400).json({
-//       message: "missing required text field"
-//     })
-//   } else {
-//     req.text = text.trim()
-//     next()
-//   }
-// }
-
 // interacting with DB? use async
 async function validateProjectId(req, res, next) {
 
@@ -33,7 +20,27 @@ async function validateProjectId(req, res, next) {
   }
 }
 
+function validateProject(req, res, next) {
+
+  const { name, description } = req.body
+  if (!name || !name.trim()) {
+    res.status(400).json({
+      message: "missing required name field"
+    })
+   } else if (!description || !description.trim()) {
+    res.status(400).json({
+      message: "missing required description field"
+    })
+  } else {
+    req.name = name.trim()
+    req.description = description.trim()
+    next()
+  }
+}
+
+
 // do not forget to expose these functions to other modules
 module.exports = {
   validateProjectId,
+  validateProject,
 }
