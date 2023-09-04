@@ -2,7 +2,7 @@
 const express = require('express');
 
 // The middleware functions also need to be required
-const { validateProjectId, validateProject } = require("./projects-middleware")
+const { validateProjectId, validateProject, validatePut } = require("./projects-middleware")
 
 // The middleware functions also need to be required
 const Project = require("../projects/projects-model")
@@ -38,6 +38,28 @@ router.post('/', validateProject, (req, res, next) => {
     .catch(next)
 });
 
+
+router.put('/:id', validateProjectId, validatePut, (req, res, next) => {
+  const { name, description, completed } = req.body
+  Project.update(req.params.id, { name: name, description: description, completed: completed })
+    .then(() => { return Project.get(req.params.id) })
+    .then(project => {
+      res.json(project)
+    })
+    .catch(next)
+});
+
+
+router.delete('/:id', validateProjectId, async (req, res, next) => {
+  // RETURN THE FRESHLY DELETED USER OBJECT
+  // this needs a middleware to verify user id
+  try {
+    await Project.remove(req.params.id)
+    res.json(req.project)
+  } catch(err) {
+    next(err)
+  }
+});
 
 // error handling
 router.use((err, req, res, next) => {

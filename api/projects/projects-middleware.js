@@ -38,9 +38,32 @@ function validateProject(req, res, next) {
   }
 }
 
+function validatePut(req, res, next) {
+  console.log(`validating put...`)
+  console.log(req.body)
+  const { name, description, completed } = req.body
+  if (!name || !name.trim()) {
+    res.status(400).json({
+      message: "missing required name field"
+    })
+   } else if (!description || !description.trim()) {
+    res.status(400).json({
+      message: "missing required description field"
+    })
+  } else if (completed !== false && completed !== true) {
+    res.status(400).json({
+      message: "missing required completed field"
+    })
+  } else {
+    req.name = name.trim()
+    req.description = description.trim()
+    next()
+  }
+}
 
 // do not forget to expose these functions to other modules
 module.exports = {
   validateProjectId,
   validateProject,
+  validatePut,
 }
