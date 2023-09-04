@@ -19,7 +19,57 @@ async function validateActionId(req, res, next) {
   }
 }
 
+function validateAction(req, res, next) {
+
+  const { notes, description, project_id } = req.body
+  if (!notes || !notes.trim()) {
+    res.status(400).json({
+      message: "missing required notes field"
+    })
+   } else if (!description || !description.trim()) {
+    res.status(400).json({
+      message: "missing required description field"
+    })
+  } else if (!project_id) {
+    res.status(400).json({
+      message: "missing required project_id field"
+    })
+  } else {
+    req.notes = notes.trim()
+    req.description = description.trim()
+    next()
+  }
+}
+
+function validateActionPut(req, res, next) {
+
+  const { notes, description, project_id, completed } = req.body
+  if (!notes || !notes.trim()) {
+    res.status(400).json({
+      message: "missing required notes field"
+    })
+   } else if (!description || !description.trim()) {
+    res.status(400).json({
+      message: "missing required description field"
+    })
+  } else if (!project_id) {
+    res.status(400).json({
+      message: "missing required project_id field"
+    })
+  } else if (completed !== false && completed !== true) {
+    res.status(400).json({
+      message: "missing required completed field"
+    })
+  } else {
+    req.notes = notes.trim()
+    req.description = description.trim()
+    next()
+  }
+}
+
 // do not forget to expose these functions to other modules
 module.exports = {
   validateActionId,
+  validateAction,
+  validateActionPut,
 }

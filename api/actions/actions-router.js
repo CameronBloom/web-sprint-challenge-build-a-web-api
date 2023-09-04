@@ -2,7 +2,7 @@
 const express = require('express');
 
 // The middleware functions also need to be required
-const { validateActionId } = require("./actions-middlware")
+const { validateActionId, validateAction, validateActionPut } = require("./actions-middlware")
 
 // The middleware functions also need to be required
 const Action = require("../actions/actions-model")
@@ -22,6 +22,29 @@ router.get('/', (req, res, next) => {
     })
     .catch(next)
 });
+
+router.get('/:id', validateActionId, (req, res) => {
+  res.json(req.action)
+});
+
+router.post('/', validateAction, (req, res, next) => {
+  Action.insert(req.body)
+    .then(action => {
+      res.status(201).json(action)
+    })
+    .catch(next)
+});
+
+router.put('/:id', validateActionId, validateActionPut, (req, res, next) => {
+  const { name, description, project_id, completed } = req.body
+  Action.update(req.params.id, { name: name, description: description, completed: completed, project_id: project_id })
+    .then(() => { return Action.get(req.params.id) })
+    .then(action => {
+      res.json(action)
+    })
+    .catch(next)
+});
+
 
 router.delete('/:id', validateActionId, async (req, res, next) => {
   try {
