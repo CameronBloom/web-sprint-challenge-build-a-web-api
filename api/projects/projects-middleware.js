@@ -1,6 +1,5 @@
 const Project = require("../projects/projects-model")
 
-// interacting with DB? use async
 async function validateProjectId(req, res, next) {
 
   try {
